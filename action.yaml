@@ -1,0 +1,47 @@
+name: Handle Java build actions
+description: The action will handle all Java build related actions.
+inputs:
+  java_version:
+    description: NodeJS version
+    default: 17
+  static_code_analysis:
+    description: Tool to be used for static code analysis like sonar, lint.
+    default: sonar
+  build:
+    description: true if build action needs to be performed.  
+  code_analysis:
+    description: true if static code analysis action needs to be performed.
+  store_artifact:
+    description: true to store the artifacts.
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Java
+      uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'temurin'
+          architecture: x64      
+    - name: Build Node Application
+      if: inputs.build == 'true'
+      run: mvn clean install
+      shell: bash        
+    - name: Perform Sonar Analysis
+      if: inputs.code_analysis == 'true' && inputs.static_code_analysis == 'sonar'
+      run: echo "Sonar analysis..."
+      shell: bash
+    - name: Prepare Artifact Name
+      run: |
+        echo "ARTIFACT_NAME=${{github.event.repository.name}}-${GITHUB_REF_NAME////-}-${GITHUB_RUN_NUMBER}" >> $GITHUB_OUTPUT
+      shell: bash
+      id: prepare_artifact
+    - name: Store Artifact
+      if: inputs.store_artifact == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.prepare_artifact.outputs.ARTIFACT_NAME }}
+        path: target/*.jar
+    
+
+       
