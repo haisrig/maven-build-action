@@ -19,10 +19,10 @@ runs:
   steps:
     - name: Setup Java
       uses: actions/setup-java@v4
-        with:
-          java-version: ${{ inputs.java-version }}
-          distribution: 'temurin'
-          architecture: x64      
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: 'temurin'
+        architecture: x64      
     - name: Build Node Application
       if: inputs.build == 'true'
       run: mvn clean install
