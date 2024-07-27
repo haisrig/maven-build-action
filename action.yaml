@@ -20,7 +20,7 @@ runs:
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ inputs.java-version }}
+        java-version: ${{ inputs.java_version }}
         distribution: 'temurin'
         architecture: x64      
     - name: Build Node Application
